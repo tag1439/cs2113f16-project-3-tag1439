@@ -12,7 +12,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 
 /**
- * YOUR NAME HERE
+ * Toni Giacchi
  */
 public class ChatClient extends ChatWindow {
 
@@ -64,7 +64,7 @@ public class ChatClient extends ChatWindow {
 	}
 
 	/** This inner class handles communication with the server. */
-	class Communicator implements ActionListener{
+	class Communicator implements ActionListener, Runnable{
 		private Socket socket;
 		private PrintWriter writer;
 		private BufferedReader reader;
@@ -74,9 +74,20 @@ public class ChatClient extends ChatWindow {
 		public void actionPerformed(ActionEvent actionEvent) {
 			if(actionEvent.getActionCommand().compareTo("Connect") == 0) {
 				connect();
+				sendMsg(nameTxt.getText()+ " has joined.");
 			}
 			else if(actionEvent.getActionCommand().compareTo("Send") == 0) {
-				sendMsg(messageTxt.getText());
+				String command = "/name";
+				if(messageTxt.getText().length() > 5 && messageTxt.getText().substring(0,5).equals(command))
+				{
+					String newName = messageTxt.getText().substring(6);
+					sendMsg(nameTxt.getText() + " has changed name to " + newName);
+					nameTxt.setText(newName);
+
+
+				}
+				else
+					sendMsg(nameTxt.getText() + ": " + messageTxt.getText());
 			}
 		}
 
@@ -88,9 +99,8 @@ public class ChatClient extends ChatWindow {
 				printMsg("Connection made to " + serverIP);
 				writer = new PrintWriter(socket.getOutputStream(), true);
 				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-
-				sendMsg("Hello server");
-
+				Thread t = new Thread(this);
+				t.start();
 			}
 			catch(IOException e) {
 				printMsg("\nERROR:" + e.getLocalizedMessage() + "\n");
@@ -98,12 +108,30 @@ public class ChatClient extends ChatWindow {
 		}
 		/** Receive and display a message */
 		public void readMsg() throws IOException {
-			String s = reader.readLine();
-			printMsg(s);
+			try{
+				String s = reader.readLine();
+				printMsg(s);
+			}
+			catch(IOException e) {
+				System.exit(0);
+			}
+
 		}
 		/** Send a string */
 		public void sendMsg(String s){
 			writer.println(s);
+
+		}
+
+		@Override
+		public void run() {
+			try {
+				while(true) {
+					readMsg();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
