@@ -83,12 +83,16 @@ public class ChatClient extends ChatWindow {
 					String newName = messageTxt.getText().substring(6);
 					sendMsg(nameTxt.getText() + " has changed name to " + newName);
 					nameTxt.setText(newName);
-
+					//this if statement checks to see if the /name command is being used
+					//if so, it will change the name of the person and show a message to the clients and server
 
 				}
 				else
 					sendMsg(nameTxt.getText() + ": " + messageTxt.getText());
+				//else it is going to send the message to the server and other clients
+				//specifically indicating who sent it
 			}
+
 		}
 
 		/** Connect to the remote server and setup input/output streams. */
@@ -99,6 +103,7 @@ public class ChatClient extends ChatWindow {
 				printMsg("Connection made to " + serverIP);
 				writer = new PrintWriter(socket.getOutputStream(), true);
 				reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				//creates a thread for each time a new client connects to the server
 				Thread t = new Thread(this);
 				t.start();
 			}
@@ -110,16 +115,19 @@ public class ChatClient extends ChatWindow {
 		public void readMsg() throws IOException {
 			try{
 				String s = reader.readLine();
-				printMsg(s);
+				printMsg(s);//reads the message from the server and prints it to the client's screen
 			}
 			catch(IOException e) {
 				System.exit(0);
+				//is there is nothing being read from server, it means the server closed
+				//therefore we could also close the clients
+
 			}
 
 		}
 		/** Send a string */
 		public void sendMsg(String s){
-			writer.println(s);
+			writer.println(s);//writes the message to the server
 
 		}
 
@@ -127,7 +135,7 @@ public class ChatClient extends ChatWindow {
 		public void run() {
 			try {
 				while(true) {
-					readMsg();
+					readMsg();//when the threads starts, the client will begin to read in interactions with the server
 				}
 			} catch (IOException e) {
 				e.printStackTrace();

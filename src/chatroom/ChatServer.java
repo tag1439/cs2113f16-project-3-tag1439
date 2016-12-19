@@ -16,13 +16,14 @@ public class ChatServer extends ChatWindow{
 
 	private ClientHandler handler;
 	ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
+	//this arraylist contains all of the clients that are connected to the server
 
 	public ChatServer() {
 		super();
 		this.setTitle("Chat Server");
 		this.setLocation(80, 80);
 
-		while (true) {
+		while (true) {//this while loop holds as long as there is a connection
 			try {
 				// Create a listening service for connections
 				// at the designated port number.
@@ -34,7 +35,7 @@ public class ChatServer extends ChatWindow{
 					Socket socket = srv.accept();
 
 					handler = new ClientHandler(socket);
-					Thread t = new Thread(handler);
+					Thread t = new Thread(handler);//this creates a thread when a connection is created
 					clients.add(handler);
 					t.start();
 
@@ -52,7 +53,7 @@ public class ChatServer extends ChatWindow{
 		private BufferedReader reader;
 
 
-			public ClientHandler(Socket socket) {
+			public ClientHandler(Socket socket) throws IOException {
 				try {
 					InetAddress serverIP = socket.getInetAddress();
 					printMsg("Connection made to " + serverIP);
@@ -79,26 +80,25 @@ public class ChatServer extends ChatWindow{
 			/** Receive and display a message */
 			public void readMsg() throws IOException {
 				String s = reader.readLine();
-				printMsg(s);
-				sendMsg(s);
+				printMsg(s);//this reads in a message from the clinet and prints it to the server's screen
+				sendMsg(s);//this then also sends the message back to all the clients so it appears on their screens
 
 			}
 			/** Send a string */
 			public void sendMsg(String s){
 				for(int i = 0; i< clients.size(); i++){
 					clients.get(i).writer.println(s);
-
+					//this goes through the arraylist and sends a message to all of the clients in the chat
 				}
 
 			}
 
 		@Override
 		public void run() {
-			handleConnection();
+			handleConnection();//this has the thread handle the connection between the server and the clients
 
 		}
 	}
-
 
 
 	public static void main(String args[]){
