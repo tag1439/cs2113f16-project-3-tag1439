@@ -81,7 +81,7 @@ public class ChatServer extends ChatWindow{
 			public void readMsg() throws IOException {
 				String s = reader.readLine();
 				printMsg(s);//this reads in a message from the clinet and prints it to the server's screen
-				sendMsg(s);//this then also sends the message back to all the clients so it appears on their screens
+				sendMsg(s);//this then also sends the message back to all the clients so it appears on their screens also
 
 			}
 			/** Send a string */

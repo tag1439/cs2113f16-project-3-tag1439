@@ -84,7 +84,7 @@ public class ChatClient extends ChatWindow {
 					sendMsg(nameTxt.getText() + " has changed name to " + newName);
 					nameTxt.setText(newName);
 					//this if statement checks to see if the /name command is being used
-					//if so, it will change the name of the person and show a message to the clients and server
+					//if so, it will change the name of the person and show a message to the clients and server saying so
 
 				}
 				else
